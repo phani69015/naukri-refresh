@@ -22,7 +22,7 @@ def lambda_handler(event, context):
     try:
         pdf = drive.download(os.environ["RESUME_DRIVE_URL"])
         # A fresh filename each day so the upload registers as a new resume.
-        filename = f"resume_{datetime.now(timezone.utc):%d_%B_%Y}.pdf".lower()
+        filename = f"Phanendra_CV_{datetime.now(timezone.utc):%d-%m-%Y}.pdf"
 
         client = NaukriClient(os.environ["NAUKRI_USERNAME"], os.environ["NAUKRI_PASSWORD"])
         client.login()
