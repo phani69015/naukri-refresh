@@ -1,5 +1,4 @@
 .env
-resume.pdf
 build/
 *.zip
 __pycache__/
