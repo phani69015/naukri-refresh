@@ -6,6 +6,7 @@ logs the error and returns normally, so Lambda's async-retry never re-runs it.
 Environment variables (all required):
   NAUKRI_USERNAME, NAUKRI_PASSWORD
   RESUME_DRIVE_URL   Google Drive share link, access "Anyone with the link"
+  RESUME_NAME        filename prefix, e.g. Phanendra_CV -> Phanendra_CV_30-10-2026.pdf
 """
 import logging
 import os
@@ -22,7 +23,7 @@ def lambda_handler(event, context):
     try:
         pdf = drive.download(os.environ["RESUME_DRIVE_URL"])
         # A fresh filename each day so the upload registers as a new resume.
-        filename = f"Phanendra_CV_{datetime.now(timezone.utc):%d-%m-%Y}.pdf"
+        filename = f"{os.environ['RESUME_NAME']}_{datetime.now(timezone.utc):%d-%m-%Y}.pdf"
 
         client = NaukriClient(os.environ["NAUKRI_USERNAME"], os.environ["NAUKRI_PASSWORD"])
         client.login()

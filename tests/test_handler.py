@@ -24,13 +24,16 @@ def env(monkeypatch):
     monkeypatch.setenv("NAUKRI_USERNAME", "u")
     monkeypatch.setenv("NAUKRI_PASSWORD", "p")
     monkeypatch.setenv("RESUME_DRIVE_URL", LINK)
+    monkeypatch.setenv("RESUME_NAME", "Test_CV")
 
 
 @responses.activate
 def test_success_makes_one_attempt():
     responses.get(drive.DOWNLOAD_URL.format(file_id="abc_123-X"), body=b"%PDF-1")
     mock_happy_path()
-    assert handler.lambda_handler({}, None)["status"] == "ok"
+    result = handler.lambda_handler({}, None)
+    assert result["status"] == "ok"
+    assert result["file"].startswith("Test_CV_") and result["file"].endswith(".pdf")
     logins = [c for c in responses.calls if c.request.url == naukri.LOGIN_URL]
     assert len(logins) == 1
 
