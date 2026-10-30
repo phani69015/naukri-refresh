@@ -41,7 +41,7 @@ call POST "https://www.naukri.com/central-login-services/v1/login" \
   -H "content-type: application/json" -H "referer: https://www.naukri.com/nlogin/login" \
   -H "systemid: jobseeker" \
   --data "{\"username\":\"$(json_escape "$NAUKRI_USERNAME")\",\"password\":\"$(json_escape "$NAUKRI_PASSWORD")\"}"
-TOKEN="$(awk '$6 == "nauk_at" {print $7}' "$JAR" | head -n1)"
+TOKEN="$(awk '$6 == "nauk_at" {print $7}' "$JAR" 2>/dev/null | head -n1 || true)"
 [[ -n "$TOKEN" ]] || die "login gave no token (wrong credentials, or Naukri asked for OTP/MFA)"
 BEARER="authorization: Bearer $TOKEN"
 
