@@ -1,0 +1,7 @@
+.env
+resume.pdf
+build/
+*.zip
+__pycache__/
+.venv/
+.pytest_cache/
