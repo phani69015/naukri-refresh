@@ -1,0 +1,37 @@
+name: refresh-naukri-profile
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 3 * * *"   # once a day, 09:00 IST (GitHub may delay it)
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements.txt
+      # One attempt: handler logs failures and returns; the step fails only if it reports "failed".
+      - name: Refresh profile
+        env:
+          NAUKRI_USERNAME: ${{ secrets.NAUKRI_USERNAME }}
+          NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
+          RESUME_DRIVE_URL: ${{ secrets.RESUME_DRIVE_URL }}
+          RESUME_NAME: ${{ secrets.RESUME_NAME }}
+        run: |
+          python - <<'PY'
+          import logging, sys
+          logging.basicConfig(level=logging.INFO)
+          import handler
+          result = handler.lambda_handler({}, None)
+          print(result)
+          sys.exit(0 if result["status"] == "ok" else 1)
+          PY
